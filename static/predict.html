@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<input id="image-selector" type="file">
+	<button id="pred"> Predict </button>
+	<p style="font-weight: bold"> Prediction </p>
+	<p> Melesma: <span id="mel"></span></p>
+	<p> Bp: <span id="bp"></span></p>
+	<p> Cherry A: <span id="cherry"></span></p>
+	<img id="selected-image"  height="150" width="150" src=""/>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script>
+		let base64Image;
+/*
+		$("#image-selector").change(function(){
+		let reader= new FileReader();			
+		reader.onload = funtion(e){
+			let dataURL = reader.result;
+				$('#selected-image').attr("src",dataURL);
+				base64Image= dataURL.replace(/^data:image\/[a-z]+;base64,/, "");
+				console.log(base64Image);
+		}
+		reader.readAsDataURL($("#image-selector")[0].files[0]);
+			$("#mel").text("");
+			$("#bp").text("");
+			$("#cherry").text("");
+			
+		});*/
+
+function readFile() {
+  
+  if (this.files && this.files[0]) {
+    
+    var FR= new FileReader();
+    
+    FR.addEventListener("load", function(e) {
+      document.getElementById("selected-image").src       = e.target.result;
+      base64Image = e.target.result;
+    }); 
+    
+    FR.readAsDataURL( this.files[0] );
+  }
+  
+}
+
+document.getElementById("image-selector").addEventListener("change", readFile);
+
+		$("#pred").click(function(event){
+		let message={
+			image: base64Image
+		}
+			console.log(message);
+			$.post("http://localhost:5000/predict",JSON.stringify(message),function(response){
+			$("#mel").text(response.prediction.akiec.toFixed(6));
+			$("#bp").text(response.prediction.akiec.toFixed(6));
+			$("#cherry").text(response.prediction.akiec.toFixed(6));
+
+			console.log(response);
+			});
+		});
+
+		
+
+
+
+	</script>
+
+</body>
+</html>
